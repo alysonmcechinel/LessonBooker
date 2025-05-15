@@ -1,6 +1,7 @@
 ﻿using LessonBooker.Entities;
 using LessonBooker.Models;
 using LessonBooker.Persistence;
+using LessonBooker.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,32 +9,28 @@ namespace LessonBooker.Controllers;
 
 public class ClassController : ControllerBase
 {
-    private readonly LessonBookerDbContext _dbContext;
+    private readonly IClassService _classService;
 
-    public ClassController(LessonBookerDbContext dbContext)
+    public ClassController(IClassService classService)
     {
-        _dbContext = dbContext;
-    }
-
-    [HttpGet("GetAllClass")]
-    public IActionResult GetAllClass()
-    {
-        var classes = _dbContext.Classes.Include(x => x.Students).ToList();
-
-        if (!classes.Any())
-            return BadRequest("Nenhuma aula cadastrada");
-
-        return Ok(classes);
+        _classService = classService;
     }
 
     [HttpPost("CreateClass")]
     public IActionResult CreateClass([FromBody] CreateClassRequest request)
     {
-        var classEntity = new Classes(request.Name, request.ClassDate, request.MaxParticipants, request.ClassType);
-
-        _dbContext.Classes.Add(classEntity);
-        _dbContext.SaveChanges();
-
-        return Ok(classEntity);
+        try
+        {
+            var result = _classService.CreateStudent(request);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Erro interno ao cadastrar Aula. Error: {ex.Message}");
+        }
     }
 }

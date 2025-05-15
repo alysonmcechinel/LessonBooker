@@ -1,9 +1,13 @@
 using LessonBooker.Persistence;
+using LessonBooker.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<LessonBookerDbContext>(opt => opt.UseInMemoryDatabase("LessonBookerDb"));
+
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IClassService, ClassService>();
 
 builder.Services.AddControllers();
 

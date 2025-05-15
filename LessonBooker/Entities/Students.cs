@@ -34,7 +34,7 @@ public class Students
     public void AddClass(Classes classes)
     {
         if (MaxClasses())
-            throw new InvalidOperationException("Seu plano atingiu o max de aulas no mês");
+            throw new ArgumentException("Seu plano atingiu o max de aulas no mês");
 
         Classes.Add(classes);
     }

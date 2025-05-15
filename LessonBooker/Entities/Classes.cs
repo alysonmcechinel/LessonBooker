@@ -30,10 +30,10 @@ public class Classes
     public void AddStudent(Students student)
     {
         if (IsClassFull())
-            throw new InvalidOperationException("Aula Atingiu numero max de alunos");
+            throw new ArgumentException("Aula Atingiu numero max de alunos");
 
         if (StudentRegistered(student.StudentId))
-            throw new InvalidOperationException("Aluno já cadastrado nessa aula");
+            throw new ArgumentException("Aluno já cadastrado nessa aula");
 
         Students.Add(student);
     }

@@ -1,6 +1,7 @@
 ﻿using LessonBooker.Entities;
 using LessonBooker.Models;
 using LessonBooker.Persistence;
+using LessonBooker.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,77 +9,64 @@ namespace LessonBooker.Controllers;
 
 public class StudentsController : ControllerBase
 {
-    private readonly LessonBookerDbContext _dbContext;
+    private readonly IStudentService _studentService;
 
-    public StudentsController(LessonBookerDbContext dbContext) 
+    public StudentsController(IStudentService studentService) 
     {
-        _dbContext = dbContext;
+        _studentService = studentService;
     }
 
     [HttpGet("GetAllStudents")]
     public IActionResult GetAllStudents()
     {
-        var students = _dbContext.Students
-        .Include(x => x.Classes)
-        .Select(s => new StudentResponse
+        try
         {
-            StudentId = s.StudentId,
-            Name = s.Name,
-            PlanType = s.PlanType,
-            Classes = s.Classes.Select(c => new ClassResponse
-            {
-                ClassId = c.ClassId,
-                Name = c.Name,
-                ClassDate = c.ClassDate,
-                ClassType = c.ClassType
-            }).ToList()
-        }).ToList();
-
-        if (!students.Any())
-            return BadRequest("Nenhum estudante cadastrado");
-
-        return Ok(students);
+            var result = _studentService.GetAllStudents();
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Erro interno ao buscar alunos. Error: {ex.Message}");
+        }
     }
 
     [HttpPost("CreateStudent")]
     public IActionResult CreateStudent([FromBody] CreateStudentRequest request)
     {
-        var student = new Students(request.Name, request.PlanType);
-
-        _dbContext.Students.Add(student);
-        _dbContext.SaveChanges();
-
-        return Ok(student);
+        try
+        {
+            var result = _studentService.CreateStudent(request);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Erro interno ao cadastrar alunos. Error: {ex.Message}");
+        }
     }
 
     [HttpPost("Booking")]
     public IActionResult Booking(int idClass, int idStudent)
     {
-        var classEntity = _dbContext.Classes
-            .Include(x => x.Students)
-            .FirstOrDefault(x => x.ClassId == idClass);
-
-        if (classEntity == null)
-            return BadRequest("Aula não encontrada!");
-
-        var student = _dbContext.Students
-            .Include(x => x.Classes)
-            .FirstOrDefault(x => x.StudentId == idStudent);
-
-        if (student == null)
-            return BadRequest("Aluno não encontrado");
-
-        if (classEntity.IsClassFull())
-            return BadRequest("Aula Atingiu numero max de alunos");
-
-        if (student.MaxClasses())
-            return BadRequest("Seu plano atingiu o max de aulas no mês");
-
-        classEntity.AddStudent(student);
-        student.AddClass(classEntity);
-
-        _dbContext.SaveChanges();
-
-        return Ok("Cadastrado com sucesso");
+        try
+        {
+            _studentService.BookStudentInClass(idClass, idStudent);
+            return Ok("Aluno inscrito com sucesso na aula.");
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Erro interno ao inserir aluno na aula. Error: {ex.Message}");
+        }
     }
 }
