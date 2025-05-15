@@ -1,6 +1,9 @@
+using LessonBooker.Persistence;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddDbContext<> config db inMemory
+builder.Services.AddDbContext<LessonBookerDbContext>(opt => opt.UseInMemoryDatabase("LessonBookerDb"));
 
 builder.Services.AddControllers();
 

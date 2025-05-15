@@ -1,6 +1,6 @@
 ﻿namespace LessonBooker.Enums;
 
-public enum PlanType
+public enum PlanTypeEnum
 {
     Monthly = 0,
     Quarterly = 1,
