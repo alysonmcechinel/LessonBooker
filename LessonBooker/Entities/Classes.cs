@@ -25,10 +25,15 @@ public class Classes
 
     public bool IsClassFull() => Students.Count >= MaxParticipants;
 
+    public bool StudentRegistered(int idStudent) => Students.Any(x => x.StudentId == idStudent);
+
     public void AddStudent(Students student)
     {
-        if(IsClassFull())
+        if (IsClassFull())
             throw new InvalidOperationException("Aula Atingiu numero max de alunos");
+
+        if (StudentRegistered(student.StudentId))
+            throw new InvalidOperationException("Aluno já cadastrado nessa aula");
 
         Students.Add(student);
     }

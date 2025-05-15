@@ -12,11 +12,17 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // Inserir dados no banco de dados InMemory
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<LessonBookerDbContext>();
+        DataSeeder.Seed(dbContext);
+    }
 }
 
 app.UseHttpsRedirection();
