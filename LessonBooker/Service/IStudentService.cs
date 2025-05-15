@@ -4,7 +4,8 @@ namespace LessonBooker.Service;
 
 public interface IStudentService
 {
-    void BookStudentInClass(int idClass, int idStudent);
+    void BookStudentInClass(BookingRequest request);
     StudentResponse CreateStudent(CreateStudentRequest request);
     List<StudentResponse> GetAllStudents();
+    ReportStudentResponse GetStudentClassReport(int idStudent);
 }

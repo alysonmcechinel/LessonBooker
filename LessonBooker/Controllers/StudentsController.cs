@@ -16,8 +16,14 @@ public class StudentsController : ControllerBase
         _studentService = studentService;
     }
 
+    /// <summary>
+    /// Método para consultar todos os alunos cadastrados
+    /// </summary>
     [HttpGet("GetAllStudents")]
-    public IActionResult GetAllStudents()
+    [ProducesResponseType(typeof(StudentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    public ActionResult<List<StudentResponse>> GetAllStudents()
     {
         try
         {
@@ -30,11 +36,18 @@ public class StudentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest($"Erro interno ao buscar alunos. Error: {ex.Message}");
+            return StatusCode(500, $"Erro interno ao buscar alunos. Error: {ex.Message}");
         }
     }
 
+    /// <summary>
+    /// Método para cadastrar aluno
+    /// </summary>
+    /// <param name="request">CreateStudentRequest: input de dados</param>
     [HttpPost("CreateStudent")]
+    [ProducesResponseType(typeof(StudentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public IActionResult CreateStudent([FromBody] CreateStudentRequest request)
     {
         try
@@ -48,16 +61,23 @@ public class StudentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest($"Erro interno ao cadastrar alunos. Error: {ex.Message}");
+            return StatusCode(500, $"Erro interno ao cadastrar alunos. Error: {ex.Message}");
         }
     }
 
+    /// <summary>
+    /// Método para agendamento de aluno em uma aula
+    /// </summary>
+    /// <param name="request">BookingRequest: input de dados</param>
     [HttpPost("Booking")]
-    public IActionResult Booking(int idClass, int idStudent)
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    public IActionResult Booking([FromBody] BookingRequest request)
     {
         try
         {
-            _studentService.BookStudentInClass(idClass, idStudent);
+            _studentService.BookStudentInClass(request);
             return Ok("Aluno inscrito com sucesso na aula.");
         }
         catch (ArgumentException ex)
@@ -66,7 +86,32 @@ public class StudentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest($"Erro interno ao inserir aluno na aula. Error: {ex.Message}");
+            return StatusCode(500, $"Erro interno ao inserir aluno na aula. Error: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Método para consultar relatório por aluno
+    /// </summary>
+    /// <param name="request">idStudent: input de dados</param>
+    [HttpGet("{idStudent}/report")]
+    [ProducesResponseType(typeof(ReportStudentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    public ActionResult<ReportStudentResponse> GetStudentClassReport(int idStudent)
+    {
+        try
+        {
+            var result = _studentService.GetStudentClassReport(idStudent);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro ao gerar relatorio. Error: {ex.Message}");
         }
     }
 }

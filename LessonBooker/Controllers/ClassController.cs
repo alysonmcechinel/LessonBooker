@@ -16,7 +16,14 @@ public class ClassController : ControllerBase
         _classService = classService;
     }
 
+    /// <summary>
+    /// Método para cadastrar aula
+    /// </summary>
+    /// <param name="request">CreateClassRequest: input de dados</param>
     [HttpPost("CreateClass")]
+    [ProducesResponseType(typeof(ClassResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public IActionResult CreateClass([FromBody] CreateClassRequest request)
     {
         try
@@ -30,7 +37,7 @@ public class ClassController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest($"Erro interno ao cadastrar Aula. Error: {ex.Message}");
+            return StatusCode(500, $"Erro interno ao cadastrar Aula. Error: {ex.Message}");
         }
     }
 }

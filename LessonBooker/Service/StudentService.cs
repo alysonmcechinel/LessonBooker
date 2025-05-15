@@ -14,18 +14,18 @@ public class StudentService : IStudentService
         _dbContext = dbContext;
     }
 
-    public void BookStudentInClass(int idClass, int idStudent)
+    public void BookStudentInClass(BookingRequest request)
     {
         var classEntity = _dbContext.Classes
             .Include(x => x.Students)
-            .FirstOrDefault(x => x.ClassId == idClass);
+            .FirstOrDefault(x => x.ClassId == request.ClassId);
 
         if (classEntity == null)
             throw new ArgumentException("Aula não encontrada!");
 
         var student = _dbContext.Students
             .Include(x => x.Classes)
-            .FirstOrDefault(x => x.StudentId == idStudent);
+            .FirstOrDefault(x => x.StudentId == request.StudentId);
 
         if (student == null)
             throw new ArgumentException("Aluno não encontrado!");
@@ -70,8 +70,41 @@ public class StudentService : IStudentService
             }).ToList();
 
         if (!students.Any())
-            throw new ArgumentException("Nenhum estudante cadastrado");
+            throw new ArgumentException("Nenhum estudante cadastrado!");
 
         return students;
+    }
+
+    public ReportStudentResponse GetStudentClassReport(int idStudent)
+    {
+        var student = _dbContext.Students
+        .Include(x => x.Classes)
+        .FirstOrDefault(i => i.StudentId == idStudent);
+
+        if (student == null)
+            throw new ArgumentException("Aluno não encontrado!");
+
+        var currentMonth = DateTime.Now;
+
+        var currentMonthClasses = student.Classes
+            .Where(x => x.ClassDate.Month == currentMonth.Month && x.ClassDate.Year == currentMonth.Year)
+            .ToList();
+
+        var classTypeCounts = currentMonthClasses
+            .GroupBy(x => x.ClassType)
+            .Select(i => new ClassTypeReport
+            {
+                ClassType = i.Key,
+                Count = i.Count()
+            })
+            .OrderByDescending(x => x.Count)
+            .ToList();
+
+        return new ReportStudentResponse
+        {
+            StudentName = student.Name,
+            TotalClasses = currentMonthClasses.Count,
+            MostFrequent = classTypeCounts
+        };
     }
 }
