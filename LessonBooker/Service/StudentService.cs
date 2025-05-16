@@ -1,4 +1,5 @@
 ﻿using LessonBooker.Entities;
+using LessonBooker.Enums;
 using LessonBooker.Models;
 using LessonBooker.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,10 @@ public class StudentService : IStudentService
 
     public StudentResponse CreateStudent(CreateStudentRequest request)
     {
-        var student = new Students(request.Name, request.PlanType);
+        if (!Enum.IsDefined(typeof(PlanTypeEnum), request.PlanType))
+            throw new ArgumentException($"O Tipo do plano {request.PlanType} esta inválido");
+
+        var student = new Students(request.Name, request.PlanType.Value);
 
         _dbContext.Students.Add(student);
         _dbContext.SaveChanges();
@@ -47,7 +51,7 @@ public class StudentService : IStudentService
         {
             StudentId = student.StudentId,
             Name = request.Name,
-            PlanType = request.PlanType
+            PlanType = request.PlanType.Value
         };
     }
 

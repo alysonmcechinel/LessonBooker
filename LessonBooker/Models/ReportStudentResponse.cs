@@ -11,6 +11,6 @@ public class ReportStudentResponse
 
 public class ClassTypeReport
 {
-    public ClassType ClassType { get; set; }
+    public ClassTypeEnum ClassType { get; set; }
     public int Count { get; set; }
 }

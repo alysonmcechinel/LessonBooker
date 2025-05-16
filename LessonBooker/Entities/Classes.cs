@@ -5,7 +5,7 @@ namespace LessonBooker.Entities;
 
 public class Classes
 {
-    public Classes(string name, DateTime classDate, int maxParticipants, ClassType classType)
+    public Classes(string name, DateTime classDate, int maxParticipants, ClassTypeEnum classType)
     {
         Name = name;
         ClassDate = classDate;
@@ -20,7 +20,7 @@ public class Classes
     public string Name { get; private set; }
     public DateTime ClassDate { get; private set; }
     public int MaxParticipants { get; private set; }
-    public ClassType ClassType { get; private set; }
+    public ClassTypeEnum ClassType { get; private set; }
     public List<Students> Students { get; private set; }
 
     public bool IsClassFull() => Students.Count >= MaxParticipants;

@@ -7,5 +7,5 @@ public class ClassResponse
     public int ClassId { get; set; }
     public string Name { get; set; }
     public DateTime ClassDate { get; set; }
-    public ClassType ClassType { get; set; }
+    public ClassTypeEnum ClassType { get; set; }
 }

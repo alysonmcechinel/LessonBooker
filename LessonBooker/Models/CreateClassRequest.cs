@@ -8,10 +8,10 @@ namespace LessonBooker.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public DateTime ClassDate { get; set; }
+        public DateTime? ClassDate { get; set; }
         [Required]
-        public int MaxParticipants { get; set; }
+        public int? MaxParticipants { get; set; }
         [Required]
-        public ClassType ClassType { get; set; }
+        public ClassTypeEnum? ClassType { get; set; }
     }
 }

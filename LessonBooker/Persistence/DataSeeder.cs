@@ -7,10 +7,10 @@ namespace LessonBooker.Persistence
     {
         public static void Seed(LessonBookerDbContext dbContext)
         {
-            var crossClass = new Classes("Cross", DateTime.Now, 5, ClassType.Cross);
-            var pilatesClass = new Classes("Pilates", DateTime.Now, 1, ClassType.Pilates);
-            var funcionalClass = new Classes("Funcional", DateTime.Now, 2, ClassType.FunctionalTraining);
-            var funcionalDomClass = new Classes("Funcional de Domingo", DateTime.Now, 3, ClassType.FunctionalTraining);
+            var crossClass = new Classes("Cross", DateTime.Now, 5, ClassTypeEnum.Cross);
+            var pilatesClass = new Classes("Pilates", DateTime.Now, 1, ClassTypeEnum.Pilates);
+            var funcionalClass = new Classes("Funcional", DateTime.Now, 2, ClassTypeEnum.FunctionalTraining);
+            var funcionalDomClass = new Classes("Funcional de Domingo", DateTime.Now, 3, ClassTypeEnum.FunctionalTraining);
 
             var studentJoao = new Students("Joao", PlanTypeEnum.Monthly);
             var studentMaria = new Students("Maria", PlanTypeEnum.Monthly);

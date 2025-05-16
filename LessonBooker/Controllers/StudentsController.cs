@@ -4,9 +4,11 @@ using LessonBooker.Persistence;
 using LessonBooker.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace LessonBooker.Controllers;
 
+[ApiController]
 public class StudentsController : ControllerBase
 {
     private readonly IStudentService _studentService;
@@ -52,7 +54,11 @@ public class StudentsController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _studentService.CreateStudent(request);
+
             return Ok(result);
         }
         catch (ArgumentException ex)
@@ -77,7 +83,11 @@ public class StudentsController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _studentService.BookStudentInClass(request);
+
             return Ok("Aluno inscrito com sucesso na aula.");
         }
         catch (ArgumentException ex)
@@ -102,6 +112,9 @@ public class StudentsController : ControllerBase
     {
         try
         {
+            if (idStudent < 0)
+                return BadRequest("ID aluno inválido");
+
             var result = _studentService.GetStudentClassReport(idStudent);
             return Ok(result);
         }

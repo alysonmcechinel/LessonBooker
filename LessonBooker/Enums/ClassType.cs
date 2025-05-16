@@ -1,6 +1,6 @@
 ﻿namespace LessonBooker.Enums;
 
-public enum ClassType
+public enum ClassTypeEnum
 {
     Cross = 0,
     FunctionalTraining = 1,

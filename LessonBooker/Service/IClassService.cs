@@ -4,5 +4,5 @@ namespace LessonBooker.Service;
 
 public interface IClassService
 {
-    ClassResponse CreateStudent(CreateClassRequest request);
+    ClassResponse CreateClass(CreateClassRequest request);
 }

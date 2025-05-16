@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LessonBooker.Controllers;
 
+[ApiController]
 public class ClassController : ControllerBase
 {
     private readonly IClassService _classService;
@@ -28,7 +29,11 @@ public class ClassController : ControllerBase
     {
         try
         {
-            var result = _classService.CreateStudent(request);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _classService.CreateClass(request);
+
             return Ok(result);
         }
         catch (ArgumentException ex)
